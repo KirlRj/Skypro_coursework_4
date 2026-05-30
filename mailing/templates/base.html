@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Сервис рассылок</title>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'mailing:clients' %}">Клиенты</a>
+    </nav>
+    <hr>
+    {% block content %}
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Сообщения</h1>
+<a href="{% url 'mailing:message_create' %}">Добавить сообщение</a>
+<ul>
+    {% for message in messages %}
+    <li>
+        <a href="{% url 'mailing:message_detail' pk=message.pk %}">{{ message.topic }}</a>
+    </li>
+    {% empty %}
+    <li>Сообщений пока нет</li>
+    {% endfor %}
+</ul>
+{% endblock %}

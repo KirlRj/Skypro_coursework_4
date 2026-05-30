@@ -1,6 +1,6 @@
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from .models import Client
+from .models import Client,Message
 
 class ClientListView(ListView):
     model = Client
@@ -41,3 +41,42 @@ class ClientDeleteView(DeleteView):
     model = Client
     template_name = 'client_delete.html'
     success_url = reverse_lazy('mailing:clients')
+
+class MessageListView(ListView):
+    model = Message
+    template_name = 'message_list.html'
+    context_object_name = 'messages'
+
+class MessageDetailView(DetailView):
+    model = Message
+    template_name = 'message_detail.html'
+    context_object_name = 'message'
+
+class MessageCreateView(CreateView):
+    model = Message
+    template_name = 'message_create.html'
+    fields = ['topic', 'body']
+    success_url = reverse_lazy('mailing:messages')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Создать сообщение"
+        return context
+
+class MessageUpdateView(UpdateView):
+    model = Message
+    template_name = 'message_update.html'
+    fields = ['topic', 'body']
+
+    def get_success_url(self):
+        return reverse_lazy('mailing:message_detail', kwargs={'pk': self.object.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Редактировать сообщение"
+        return context
+
+class MessageDeleteView(DeleteView):
+    model = Message
+    template_name = 'message_delete.html'
+    success_url = reverse_lazy('mailing:messages')

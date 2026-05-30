@@ -1,6 +1,10 @@
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from .models import Client,Message
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  UpdateView)
+
+from .forms import MailingForm
+from .models import Client, Mailing, Message
+
 
 class ClientListView(ListView):
     model = Client
@@ -80,3 +84,47 @@ class MessageDeleteView(DeleteView):
     model = Message
     template_name = 'message_delete.html'
     success_url = reverse_lazy('mailing:messages')
+
+class MailingListView(ListView):
+    model = Mailing
+    template_name = 'mailing_list.html'
+    context_object_name = 'mailings'
+
+class MailingDetailView(DetailView):
+    model = Mailing
+    template_name = 'mailing_detail.html'
+    context_object_name = 'mailing'
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        obj.update_status()
+        return obj
+
+class MailingCreateView(CreateView):
+    model = Mailing
+    template_name = 'mailing_create.html'
+    form_class = MailingForm
+    success_url = reverse_lazy('mailing:mailings')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Создать рассылку"
+        return context
+
+class MailingUpdateView(UpdateView):
+    model = Mailing
+    template_name = 'mailing_update.html'
+    form_class = MailingForm
+
+    def get_success_url(self):
+        return reverse_lazy('mailing:mailing_detail', kwargs={'pk': self.object.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Редактировать рассылку"
+        return context
+
+class MailingDeleteView(DeleteView):
+    model = Mailing
+    template_name = 'mailing_delete.html'
+    success_url = reverse_lazy('mailing:mailings')

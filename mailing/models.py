@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Client(models.Model):
     email = models.EmailField(unique=True, verbose_name='Email')
     full_name = models.CharField(max_length=200, verbose_name='Ф.И.О.')
@@ -22,3 +23,31 @@ class Message(models.Model):
     class Meta:
         verbose_name = 'Письмо'
         verbose_name_plural = 'Письма'
+
+
+class Mailing(models.Model):
+    start_time = models.DateTimeField(blank=False, null=False, verbose_name='Начало отправки рассылки')
+    end_time = models.DateTimeField(blank=False, null=False, verbose_name='Конец отправки рассылки')
+    status = models.CharField(max_length=20, default='Создана', verbose_name='Cтатус')
+    message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name="Письмо")
+    recipients = models.ManyToManyField(Client,verbose_name="Получатели")
+
+    def update_status(self):
+        from django.utils import timezone
+        now = timezone.now()
+        if now < self.start_time:
+            new_status = 'Создана'
+        elif self.start_time <= now <= self.end_time:
+            new_status = 'Запущена'
+        else:
+            new_status = 'Завершена'
+
+        if self.status != new_status:
+            self.status = new_status
+            self.save()
+
+    def __str__(self):
+        return f'Рассылка {self.start_time}-{self.end_time}. Статус {self.status}.'
+    class Meta:
+        verbose_name = 'Рассылка'
+        verbose_name_plural = 'Рассылки'

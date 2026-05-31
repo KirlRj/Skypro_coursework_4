@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-                                  UpdateView)
+                                  TemplateView, UpdateView)
 
 from .forms import MailingForm
 from .models import Client, Mailing, Message
@@ -151,3 +151,16 @@ def send_mailing_view(request, pk):
     result = send_mailing(mailing)
     messages.success(request, result)
     return redirect("mailing:mailing_detail", pk=pk)
+
+
+class HomeView(TemplateView):
+    template_name = "home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["all_mailing"] = Mailing.objects.count()
+        context["count_active_mailing"] = Mailing.objects.filter(
+            status="Запущена"
+        ).count()
+        context["count_uniq_clients"] = Client.objects.count()
+        return context

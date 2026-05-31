@@ -3,7 +3,7 @@ from django.views.generic import RedirectView
 
 from mailing.views import (ClientCreateView, ClientDeleteView,
                            ClientDetailView, ClientListView, ClientUpdateView,
-                           MailingCreateView, MailingDeleteView,
+                           HomeView, MailingCreateView, MailingDeleteView,
                            MailingDetailView, MailingListView,
                            MailingUpdateView, MessageCreateView,
                            MessageDeleteView, MessageDetailView,
@@ -13,7 +13,7 @@ from mailing.views import (ClientCreateView, ClientDeleteView,
 app_name = "mailing"
 
 urlpatterns = [
-    path("", RedirectView.as_view(url="/clients/"), name="home"),
+    path("", HomeView.as_view(), name="home"),
     path("clients/", ClientListView.as_view(), name="clients"),
     path("clients/<int:pk>/", ClientDetailView.as_view(), name="client_detail"),
     path("clients/<int:pk>/update/", ClientUpdateView.as_view(), name="client_update"),

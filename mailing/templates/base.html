@@ -13,5 +13,8 @@
     <hr>
     {% block content %}
     {% endblock %}
+    {% for message in messages %}
+        <p>{{ message }}</p>
+    {% endfor %}
 </body>
 </html>

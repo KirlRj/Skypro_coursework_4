@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Пользователи</h1>
+<table>
+    <tr>
+        <th>Email</th>
+        <th>Активен</th>
+        <th>Действие</th>
+    </tr>
+    {% for u in users %}
+    <tr>
+        <td>{{ u.email }}</td>
+        <td>{{ u.is_active }}</td>
+        <td>
+            <form method="post" action="{% url 'users:user_block' pk=u.pk %}">
+                {% csrf_token %}
+                <button type="submit">
+                    {% if u.is_active %}Заблокировать{% else %}Разблокировать{% endif %}
+                </button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

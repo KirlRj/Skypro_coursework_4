@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -5,6 +6,13 @@ class Client(models.Model):
     email = models.EmailField(unique=True, verbose_name="Email")
     full_name = models.CharField(max_length=200, verbose_name="Ф.И.О.")
     comment = models.TextField(blank=True, null=True, verbose_name="Комментарий")
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name="Владелец",
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return f"{self.full_name} ({self.email})"
@@ -17,6 +25,13 @@ class Client(models.Model):
 class Message(models.Model):
     topic = models.CharField(max_length=200, verbose_name="Тема письма")
     body = models.TextField(blank=False, null=False, verbose_name="Письмо")
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name="Владелец",
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return f"{self.topic}"
@@ -38,8 +53,17 @@ class Mailing(models.Model):
         Message, on_delete=models.CASCADE, verbose_name="Письмо"
     )
     recipients = models.ManyToManyField(Client, verbose_name="Получатели")
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name="Владелец",
+        null=True,
+        blank=True,
+    )
 
     def update_status(self):
+        if self.status == "Завершена":
+            return
         from django.utils import timezone
 
         now = timezone.now()

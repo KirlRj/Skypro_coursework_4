@@ -7,8 +7,19 @@
 <body>
     <nav>
         <a href="{% url 'mailing:clients' %}">Клиенты</a>
-        <a href="{%url 'mailing:messages' %}">Сообщения</a>
+        <a href="{% url 'mailing:messages' %}">Сообщения</a>
         <a href="{% url 'mailing:mailings' %}">Рассылки</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'users:logout' %}">Выйти ({{ user.email }})</a>
+            {% for group in user.groups.all %}
+                {% if group.name == 'Менеджер' %}
+                    <a href="{% url 'users:user_list' %}">Пользователи</a>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <a href="{% url 'users:login' %}">Войти</a>
+            <a href="{% url 'users:register' %}">Регистрация</a>
+        {% endif %}
     </nav>
     <hr>
     {% block content %}

@@ -14,5 +14,11 @@
 <a href="{% url 'mailing:mailing_send' pk=mailing.pk %}">Запустить рассылку</a>
 <a href="{% url 'mailing:mailing_update' pk=mailing.pk %}">Редактировать</a>
 <a href="{% url 'mailing:mailing_delete' pk=mailing.pk %}">Удалить</a>
+{% if is_manager %}
+<form method="post" action="{% url 'mailing:mailing_disable' pk=mailing.pk %}">
+    {% csrf_token %}
+    <button type="submit">Отключить рассылку</button>
+</form>
+{% endif %}
 <a href="{% url 'mailing:mailings' %}">Назад</a>
 {% endblock %}

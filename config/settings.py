@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "mailing",
+    "users",
 ]
 
 MIDDLEWARE = [
@@ -60,7 +61,10 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "mailing" / "templates"],
+        "DIRS": [
+            BASE_DIR / "mailing" / "templates",
+            BASE_DIR / "users" / "templates",
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -88,6 +92,11 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
+
+AUTH_USER_MODEL = "users.User"
+LOGIN_REDIRECT_URL = "mailing:home"
+LOGIN_URL = "users:login"
+PASSWORD_RESET_CONFIRM_URL = "users:password_reset_confirm"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -129,3 +138,14 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    }
+}

@@ -5,11 +5,11 @@ from mailing.models import MailingAttempt
 
 
 def send_mailing(mailing):
-    """Отправка почты"""
-
     now = timezone.now()
     if not (mailing.start_time <= now <= mailing.end_time):
-        return "Рассылка не активна в данный момент."
+        return 'Рассылка не активна в данный момент.'
+
+    attempts = []
 
     for client in mailing.recipients.all():
         try:
@@ -19,15 +19,17 @@ def send_mailing(mailing):
                 from_email=None,
                 recipient_list=[client.email],
             )
-            MailingAttempt.objects.create(
-                status="Успешно",
+            attempts.append(MailingAttempt(
+                status='Успешно',
                 mailing=mailing,
-            )
+            ))
         except Exception as e:
-            MailingAttempt.objects.create(
-                status="Не успешно",
+            attempts.append(MailingAttempt(
+                status='Не успешно',
                 server_response=str(e),
                 mailing=mailing,
-            )
+            ))
 
-    return "Рассылка выполнена."
+    MailingAttempt.objects.bulk_create(attempts)
+
+    return 'Рассылка выполнена.'

@@ -2,7 +2,7 @@ from django.core.mail import send_mail
 from django.utils import timezone
 
 from mailing.models import MailingAttempt
-
+from django.core.cache import cache
 
 def send_mailing(mailing):
     now = timezone.now()
@@ -31,5 +31,8 @@ def send_mailing(mailing):
             ))
 
     MailingAttempt.objects.bulk_create(attempts)
+
+    if mailing.owner:
+        cache.delete(f'home_stats_{mailing.owner.id}')
 
     return 'Рассылка выполнена.'

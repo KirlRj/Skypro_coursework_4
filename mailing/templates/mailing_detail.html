@@ -11,7 +11,10 @@
         {{ recipient.full_name }}{% if not forloop.last %}, {% endif %}
     {% endfor %}
 </p>
-<a href="{% url 'mailing:mailing_send' pk=mailing.pk %}">Запустить рассылку</a>
+<form method="post" action="{% url 'mailing:mailing_send' pk=mailing.pk %}">
+    {% csrf_token %}
+    <button type="submit">Запустить рассылку</button>
+</form>
 <a href="{% url 'mailing:mailing_update' pk=mailing.pk %}">Редактировать</a>
 <a href="{% url 'mailing:mailing_delete' pk=mailing.pk %}">Удалить</a>
 {% if is_manager %}

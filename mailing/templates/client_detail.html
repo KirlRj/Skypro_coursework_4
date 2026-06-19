@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ client.full_name }}</h1>
+<p><b>Email:</b> {{ client.email }}</p>
+<p><b>Комментарий:</b> {{ client.comment }}</p>
+<a href="{% url 'mailing:client_update' pk=client.pk %}">Редактировать</a>
+<a href="{% url 'mailing:client_delete' pk=client.pk %}">Удалить</a>
+<a href="{% url 'mailing:clients' %}">Назад</a>
+{% endblock %}

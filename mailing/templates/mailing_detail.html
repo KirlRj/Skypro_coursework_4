@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Рассылка</h1>
+<p><b>Начало:</b> {{ mailing.start_time }}</p>
+<p><b>Конец:</b> {{ mailing.end_time }}</p>
+<p><b>Статус:</b> {{ mailing.status }}</p>
+<p><b>Сообщение:</b> {{ mailing.message }}</p>
+<p><b>Получатели:</b>
+    {% for recipient in mailing.recipients.all %}
+        {{ recipient.full_name }}{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+</p>
+<form method="post" action="{% url 'mailing:mailing_send' pk=mailing.pk %}">
+    {% csrf_token %}
+    <button type="submit">Запустить рассылку</button>
+</form>
+<a href="{% url 'mailing:mailing_update' pk=mailing.pk %}">Редактировать</a>
+<a href="{% url 'mailing:mailing_delete' pk=mailing.pk %}">Удалить</a>
+{% if is_manager %}
+<form method="post" action="{% url 'mailing:mailing_disable' pk=mailing.pk %}">
+    {% csrf_token %}
+    <button type="submit">Отключить рассылку</button>
+</form>
+{% endif %}
+<a href="{% url 'mailing:mailings' %}">Назад</a>
+{% endblock %}
